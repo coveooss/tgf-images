@@ -4,7 +4,7 @@ services:
 - docker
 
 before_install:
-- if [ ${TRAVIS_TAG::1} = v- ];
+- if [ ${TRAVIS_TAG::1} = v ];
   then
     docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
   fi

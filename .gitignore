@@ -1,5 +1,2 @@
 .idea
-.pkg
-dist
-vendor
 tasks.json

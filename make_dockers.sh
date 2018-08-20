@@ -4,7 +4,7 @@ set -e
 : ${TRAVIS_TAG:=$(git describe --abbrev=0 --tags)}
 
 # If the tag does not start with image- we ignore it
-[ "${TRAVIS_TAG::6}" != image- ] && exit 0
+[ "${TRAVIS_TAG::1}" != v ] && exit 0
 
 for df in Dockerfile*
 do
@@ -14,7 +14,7 @@ do
     tag=${df:13}
     tag=${tag,,}
     [ -z ${tag} ] || tag=-${tag}
-    travis_tag=${TRAVIS_TAG:6}
+    travis_tag=${TRAVIS_TAG:1}
     travis_maj_min=${travis_tag%.*}
     version=coveo/tgf:${travis_tag}${tag}
     version_mm=coveo/tgf:${travis_maj_min}${tag}

@@ -8,10 +8,6 @@ LABEL maintainer "jgiroux@coveo.com"
 
 ENV TGF_IMAGE_TAG=""
 
-ENV TF_LINT_VERSION="0.7.2"
-ENV TF_DOC_VERSION="0.3.2"
-ENV TF_QUANTUM_VERSION="0.4.0"
-
 # Install Shells
 RUN apk update && apk add bash zsh fish bash-completion
 
@@ -23,6 +19,9 @@ RUN apk add py2-pip python3 groff less tree && \
     apk add jq zip nano vim git mercurial
 
 # Update version here (do not move at the beginning of the file since it would slow down the docker build)
+ENV TF_LINT_VERSION="0.7.2"
+ENV TF_DOC_VERSION="0.3.2"
+ENV TF_QUANTUM_VERSION="0.4.0"
 RUN curl -sLo_ https://github.com/wata727/tflint/releases/download/v${TF_LINT_VERSION}/tflint_linux_amd64.zip && unzip -p _ > ${EXE_FOLDER}/tflint && \
     curl -sLo_ https://github.com/coveo/terraform-docs/releases/download/v${TF_DOC_VERSION}/terraform-docs_${TF_DOC_VERSION}${EXT} && unzip -p _ > ${EXE_FOLDER}/terraform-docs && \
     curl -sLo_ https://github.com/coveo/terraform-provider-quantum/releases/download/v${TF_QUANTUM_VERSION}/terraform-provider-quantum_${TF_QUANTUM_VERSION}${EXT} && unzip -p _ > ${EXE_FOLDER}/terraform-provider-quantum && \

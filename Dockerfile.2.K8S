@@ -7,18 +7,17 @@ LABEL maintainer "jgiroux@coveo.com"
 
 ENV TGF_IMAGE_TAG="k8s"
 
-ENV KUBE_VERSION="1.12.0"
-ENV HELM_VERSION="2.11.0"
-
 # Install ssh (Required to perform port forwarding through bastion)
 RUN apk add openssh git
 
 # Install kubectl
+ENV KUBE_VERSION="1.12.0"
 ENV KUBECONFIG=/home/tgf/.kube/config
 RUN curl -sLo_ https://storage.googleapis.com/kubernetes-release/release/v${KUBE_VERSION}/bin/linux/amd64/kubectl && mv _ ${EXE_FOLDER}/kubectl && \
     mkdir -p /home/tgf/.kube && touch ${KUBECONFIG} && chmod 666 ${KUBECONFIG}
 
 # Install helm (git is also required by helm)
+ENV HELM_VERSION="2.11.0"
 ENV HELM_HOME=/home/tgf
 RUN curl -s -L https://kubernetes-helm.storage.googleapis.com/helm-v${HELM_VERSION}-linux-amd64.tar.gz | tar xzv && mv ./linux-amd64/helm ${EXE_FOLDER}/helm && \
     mkdir -p $(helm home)/plugins && rm -rf ./linux-amd64

@@ -8,6 +8,8 @@ LABEL maintainer "jgiroux@coveo.com"
 
 ENV TGF_IMAGE_TAG="aws"
 
+ENV TF_AWS_VERSION="1.39.0-coveo.0"
+
 # Update version here (do not move at the beginning of the file since it would slow down the docker build)
-RUN TF_AWS=1.38.0-coveo.0 && curl -sLo_ https://github.com/coveo/terraform-provider-aws/releases/download/v${TF_AWS}/terraform-provider-aws_${TF_AWS}${EXT} && unzip -p _ > ${EXE_FOLDER}/terraform-provider-aws && \
+RUN curl -sLo_ https://github.com/coveo/terraform-provider-aws/releases/download/v${TF_AWS_VERSION}/terraform-provider-aws_${TF_AWS_VERSION}${EXT} && unzip -p _ > ${EXE_FOLDER}/terraform-provider-aws && \
     chmod +x $EXE_FOLDER/* && rm _

@@ -11,7 +11,7 @@ ENV TGF_IMAGE_TAG="k8s"
 RUN apk add openssh git
 
 # Install kubectl
-ENV KUBE_VERSION="1.13.2"
+ENV KUBE_VERSION="1.13.3"
 ENV KUBECONFIG=/home/tgf/.kube/config
 RUN curl -sLo_ https://storage.googleapis.com/kubernetes-release/release/v${KUBE_VERSION}/bin/linux/amd64/kubectl && mv _ ${EXE_FOLDER}/kubectl && \
     mkdir -p /home/tgf/.kube && touch ${KUBECONFIG} && chmod 666 ${KUBECONFIG}

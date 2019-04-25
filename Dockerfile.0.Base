@@ -4,7 +4,7 @@ ARG EXE_FOLDER=/usr/local/bin
 ARG EXT=_linux_64-bits.zip
 
 LABEL vendor="Coveo"
-LABEL maintainer "jgiroux@coveo.com"
+LABEL maintainer "tools@coveo.com"
 
 ENV TGF_IMAGE="coveo/tgf"
 ENV TGF_IMAGE_TAG="base"
@@ -19,14 +19,14 @@ RUN apk update && \
     adduser -D deploy
 
 # Update version here (do not move at the beginning of the file since it would slow down the docker build)
-ENV TERRAFORM_VERSION="0.11.12"
-ENV TERRAGRUNT_VERSION="1.3.2"
-ENV GOTEMPLATE_VERSION="2.7.5"
+ENV TERRAFORM_VERSION="0.11.13"
+ENV TERRAGRUNT_VERSION="1.3.4"
+ENV GOTEMPLATE_VERSION="2.7.6"
 RUN curl -sLo_ https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip && unzip -p _ > ${EXE_FOLDER}/terraform && \
     curl -sLo_ https://github.com/coveo/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_${TERRAGRUNT_VERSION}${EXT} && unzip -p _ > ${EXE_FOLDER}/terragrunt && \
     curl -sLo_ https://github.com/coveo/gotemplate/releases/download/v${GOTEMPLATE_VERSION}/gotemplate_${GOTEMPLATE_VERSION}${EXT} && unzip -p _ > ${EXE_FOLDER}/gotemplate && \
     chmod +x $EXE_FOLDER/* && rm _
 
-ENV NEW_TERRAFORM_VERSION="0.12.0-beta1"
+ENV NEW_TERRAFORM_VERSION="0.12.0-beta2"
 RUN curl -sLo_ https://releases.hashicorp.com/terraform/${NEW_TERRAFORM_VERSION}/terraform_${NEW_TERRAFORM_VERSION}_linux_amd64.zip && unzip -p _ > ${EXE_FOLDER}/terraform_new && \
     chmod +x $EXE_FOLDER/* && rm _

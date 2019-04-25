@@ -1,7 +1,7 @@
 FROM ubuntu:latest
 
 LABEL vendor="Coveo"
-LABEL maintainer "jgiroux@coveo.com"
+LABEL maintainer "tools@coveo.com"
 
 ENV TGF_IMAGE="coveo/tgf"
 ENV TGF_IMAGE_TAG="full"

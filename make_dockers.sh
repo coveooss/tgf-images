@@ -33,7 +33,7 @@ do
     docker push $version
     if [ -n "$latest" ]
     then 
-        docker tag $version $latest && docker push $latest
+        # docker tag $version $latest && docker push $latest (we do not update latest on old version)
         docker tag $version $version_mm && docker push $version_mm
     fi
 done

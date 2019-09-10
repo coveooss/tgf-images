@@ -27,6 +27,6 @@ RUN curl -sLo_ https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/ter
     curl -sLo_ https://github.com/coveo/gotemplate/releases/download/v${GOTEMPLATE_VERSION}/gotemplate_${GOTEMPLATE_VERSION}${EXT} && unzip -p _ > ${EXE_FOLDER}/gotemplate && \
     chmod +x $EXE_FOLDER/* && rm _
 
-ENV NEW_TERRAFORM_VERSION="0.12.3"
+ENV NEW_TERRAFORM_VERSION="0.12.8"
 RUN curl -sLo_ https://releases.hashicorp.com/terraform/${NEW_TERRAFORM_VERSION}/terraform_${NEW_TERRAFORM_VERSION}_linux_amd64.zip && unzip -p _ > ${EXE_FOLDER}/terraform_new && \
     chmod +x $EXE_FOLDER/* && rm _

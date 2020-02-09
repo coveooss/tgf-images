@@ -1,11 +1,8 @@
 FROM coveo/tgf:${TRAVIS_TAG}-base
+LABEL tgf-image-tag=""
 
 ARG EXE_FOLDER=/usr/local/bin
 ARG EXT=_linux_64-bits.zip
-
-LABEL vendor="Coveo"
-LABEL maintainer "tools@coveo.com"
-
 ENV TGF_IMAGE_TAG=""
 
 # Install Shells
@@ -21,10 +18,12 @@ RUN if [ ! -e /usr/bin/python ]; then ln -sf python3 /usr/bin/python ; fi && \
     if [ ! -e /usr/bin/pip ]; then ln -s pip3 /usr/bin/pip ; fi
 
 # Update version here (do not move at the beginning of the file since it would slow down the docker build)
-ENV TF_LINT_VERSION="0.7.6"
+ENV TF_LINT_VERSION="0.14.0"
 ENV TF_DOC_VERSION="0.4.0-coveo"
 ENV TF_QUANTUM_VERSION="0.6.0"
 RUN curl -sLo_ https://github.com/wata727/tflint/releases/download/v${TF_LINT_VERSION}/tflint_linux_amd64.zip && unzip -p _ > ${EXE_FOLDER}/tflint && \
     curl -sLo_ https://github.com/coveo/terraform-docs/releases/download/v${TF_DOC_VERSION}/terraform-docs_${TF_DOC_VERSION}${EXT} && unzip -p _ > ${EXE_FOLDER}/terraform-docs && \
-    curl -sLo_ https://github.com/coveo/terraform-provider-quantum/releases/download/v${TF_QUANTUM_VERSION}/terraform-provider-quantum_${TF_QUANTUM_VERSION}${EXT} && unzip -p _ > ${EXE_FOLDER}/terraform-provider-quantum && \
-    chmod +x $EXE_FOLDER/* && rm _
+    curl -sLo_ https://github.com/coveo/terraform-provider-quantum/releases/download/v${TF_QUANTUM_VERSION}/terraform-provider-quantum_${TF_QUANTUM_VERSION}${EXT} && unzip -p _ > ${EXE_FOLDER}/terraform-provider-quantum_v${TF_QUANTUM_VERSION}
+
+# Cleanup
+RUN chmod +x $EXE_FOLDER/* && rm _

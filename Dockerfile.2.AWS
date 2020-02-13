@@ -5,7 +5,6 @@ ENV TGF_IMAGE_TAG="aws"
 ARG EXE_FOLDER=/usr/local/bin
 ARG EXT=_linux_64-bits.zip
 
-# Update version here (do not move at the beginning of the file since it would slow down the docker build)
 ENV TF_AWS_VERSION="2.48.0-coveo.0"
 RUN curl -sLo_ https://github.com/coveo/terraform-provider-aws/releases/download/v${TF_AWS_VERSION}/terraform-provider-aws_${TF_AWS_VERSION}${EXT} && unzip -p _ > ${EXE_FOLDER}/terraform-provider-aws_v${TF_AWS_VERSION}
 

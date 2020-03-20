@@ -21,7 +21,7 @@ RUN apk upgrade --no-cache && \
     adduser -D deploy
 
 # Update version here (do not move at the beginning of the file since it would slow down the docker build)
-ENV TERRAFORM_VERSION="0.12.23"
+ENV TERRAFORM_VERSION="0.12.24"
 ENV TERRAGRUNT_VERSION="2.0.2"
 ENV GOTEMPLATE_VERSION="3.3.10"
 RUN curl -sLo_ https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip && unzip -p _ > ${EXE_FOLDER}/terraform && chmod +x ${EXE_FOLDER}/terraform && rm -f _ && \

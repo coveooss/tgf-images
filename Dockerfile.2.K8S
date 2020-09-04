@@ -1,4 +1,4 @@
-FROM coveo/tgf:${TRAVIS_TAG}
+FROM ghcr.io/coveooss/tgf:${GIT_TAG}
 LABEL tgf-image-tag="k8s"
 ENV TGF_IMAGE_TAG="k8s"
 

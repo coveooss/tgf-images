@@ -6,12 +6,12 @@ ARG EXT=_linux_64-bits.zip
 LABEL vendor="Coveo" \
     maintainer="Coveo Solutions <tools@coveo.com>" \
     tgf-image="true" \
-    tgf-image-version="$TRAVIS_TAG" \
-    tgf-image-source="https://github.com/coveo/tgf-images"
+    tgf-image-version="$GIT_TAG" \
+    tgf-image-source="https://github.com/coveooss/tgf-images"
 
-ENV TGF_IMAGE="coveo/tgf"
+ENV TGF_IMAGE="ghcr.io/coveooss/tgf"
 ENV TGF_IMAGE_TAG="base"
-ENV TGF_IMAGE_VERSION="${TRAVIS_TAG}"
+ENV TGF_IMAGE_VERSION="${GIT_TAG}"
 ENV TGF_IMAGE_MAJ_MIN=
 ENV GOTEMPLATE_NO_STDIN=1
 
@@ -22,7 +22,7 @@ RUN apk upgrade --no-cache && \
 
 # Update version here (do not move at the beginning of the file since it would slow down the docker build)
 ENV TERRAFORM_VERSION="0.12.28"
-ENV TERRAGRUNT_VERSION="2.2.4"
+ENV TERRAGRUNT_VERSION="2.3.0"
 ENV GOTEMPLATE_VERSION="3.5.1"
 RUN curl -sLo_ https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip && unzip -p _ > ${EXE_FOLDER}/terraform && chmod +x ${EXE_FOLDER}/terraform && rm -f _ && \
     curl -sLo_ https://github.com/coveo/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_${TERRAGRUNT_VERSION}${EXT} && unzip -p _ > ${EXE_FOLDER}/terragrunt && chmod +x ${EXE_FOLDER}/terragrunt && rm -f _ && \

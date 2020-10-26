@@ -8,7 +8,7 @@ ENV TGF_IMAGE_TAG=""
 RUN apk update && apk add bash zsh fish bash-completion
 
 # Installing the AWS cli
-RUN apk add --no-cache python3 groff less tree && \
+RUN apk add --no-cache python3 groff less tree py3-pip && \
     pip3 install --upgrade pip && \
     pip3 install --no-cache-dir awscli mdv colorama jenkinsapi click boto3 && \
     apk add --no-cache jq zip nano vim git

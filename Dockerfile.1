@@ -4,14 +4,15 @@ LABEL tgf-image-tag=""
 ARG EXE_FOLDER=/usr/local/bin
 ENV TGF_IMAGE_TAG=""
 
-# Install Shells
-RUN apk update && apk add bash zsh fish bash-completion
+# Install tools
+RUN apk add --no-cache python3 groff less tree py3-pip bash zsh fish bash-completion jq zip nano vim git
 
-# Installing the AWS cli
-RUN apk add --no-cache python3 groff less tree py3-pip && \
-    pip3 install --upgrade pip && \
-    pip3 install --no-cache-dir awscli mdv colorama jenkinsapi click boto3 && \
-    apk add --no-cache jq zip nano vim git
+# Update pip to the latest version and install pipx (Python )
+RUN pip3 install --upgrade pip pipx
+
+# Install the AWS CLI
+ENV PATH="/root/.local/bin:${PATH}"
+RUN pipx install awscli
 
 RUN if [ ! -e /usr/bin/python ]; then ln -sf python3 /usr/bin/python ; fi && \
     if [ ! -e /usr/bin/pip ]; then ln -s pip3 /usr/bin/pip ; fi

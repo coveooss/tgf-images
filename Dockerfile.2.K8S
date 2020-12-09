@@ -8,7 +8,7 @@ ARG EXE_FOLDER=/usr/local/bin
 RUN apk add --no-cache openssh
 
 # Install kubectl
-ENV KUBE_VERSION="1.19.4"
+ENV KUBE_VERSION="1.20.0"
 ENV KUBECONFIG=/home/tgf/.kube/config
 RUN curl -sLo_ https://storage.googleapis.com/kubernetes-release/release/v${KUBE_VERSION}/bin/linux/amd64/kubectl && mv _ ${EXE_FOLDER}/kubectl && chmod +x ${EXE_FOLDER}/kubectl && \
     mkdir -p /home/tgf/.kube && touch ${KUBECONFIG} && chmod 666 ${KUBECONFIG}

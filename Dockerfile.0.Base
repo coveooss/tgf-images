@@ -21,8 +21,8 @@ RUN apk upgrade --no-cache && \
     adduser -D deploy
 
 # Update version here (do not move at the beginning of the file since it would slow down the docker build)
-ENV TERRAFORM_VERSION="0.14.3"
-ENV TERRAGRUNT_VERSION="2.5.5"
+ENV TERRAFORM_VERSION="0.14.4"
+ENV TERRAGRUNT_VERSION="2.6.0"
 ENV GOTEMPLATE_VERSION="3.6.1"
 RUN curl -sLo_ https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip && unzip -p _ > ${EXE_FOLDER}/terraform && chmod +x ${EXE_FOLDER}/terraform && rm -f _ && \
     curl -sLo_ https://github.com/coveo/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_${TERRAGRUNT_VERSION}${EXT} && unzip -p _ > ${EXE_FOLDER}/terragrunt && chmod +x ${EXE_FOLDER}/terragrunt && rm -f _ && \

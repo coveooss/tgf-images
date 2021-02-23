@@ -8,7 +8,7 @@ ARG EXE_FOLDER=/usr/local/bin
 RUN apk add --no-cache openssh
 
 # Install kubectl
-ENV KUBE_VERSION="1.20.0"
+ENV KUBE_VERSION="1.20.4"
 ENV KUBECONFIG=/home/tgf/.kube/config
 RUN curl -sLo_ https://storage.googleapis.com/kubernetes-release/release/v${KUBE_VERSION}/bin/linux/amd64/kubectl && mv _ ${EXE_FOLDER}/kubectl && chmod +x ${EXE_FOLDER}/kubectl && \
     mkdir -p /home/tgf/.kube && touch ${KUBECONFIG} && chmod 666 ${KUBECONFIG}
@@ -18,5 +18,5 @@ ENV HELM_VERSION="2.17.0"
 ENV HELM_HOME=/home/tgf
 RUN curl -sL https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz | tar xzo && mv ./linux-amd64/helm ${EXE_FOLDER}/helm && mkdir -p $(helm home)/plugins && rm -rf ./linux-amd64 && chmod +x $EXE_FOLDER/helm
 
-ENV HELM3_VERSION="3.4.1"
+ENV HELM3_VERSION="3.4.2"
 RUN curl -sL https://get.helm.sh/helm-v${HELM3_VERSION}-linux-amd64.tar.gz | tar xzo && mv ./linux-amd64/helm ${EXE_FOLDER}/helm3 && rm -rf ./linux-amd64 && chmod +x $EXE_FOLDER/helm3

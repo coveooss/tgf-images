@@ -18,5 +18,5 @@ ENV HELM_VERSION="2.17.0"
 ENV HELM_HOME=/home/tgf
 RUN curl -sL https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz | tar xzo && mv ./linux-amd64/helm ${EXE_FOLDER}/helm && mkdir -p $(helm home)/plugins && rm -rf ./linux-amd64 && chmod +x $EXE_FOLDER/helm
 
-ENV HELM3_VERSION="3.4.2"
+ENV HELM3_VERSION="3.5.2"
 RUN curl -sL https://get.helm.sh/helm-v${HELM3_VERSION}-linux-amd64.tar.gz | tar xzo && mv ./linux-amd64/helm ${EXE_FOLDER}/helm3 && rm -rf ./linux-amd64 && chmod +x $EXE_FOLDER/helm3

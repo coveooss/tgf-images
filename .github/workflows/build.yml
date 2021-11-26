@@ -18,5 +18,10 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
       - name: Build and Push Images
-        run: bash make_dockers.sh
+        run: python ./build_images.py --push

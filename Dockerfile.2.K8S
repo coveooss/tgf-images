@@ -3,17 +3,17 @@ LABEL tgf-image-tag="k8s"
 ENV TGF_IMAGE_TAG="k8s"
 
 ARG EXE_FOLDER=/usr/local/bin
+ARG TARGETPLATFORM
 
 # Install ssh (Required to perform port forwarding through bastion)
 RUN apk add --no-cache openssh
 
-# Install kubectl
+# Set tools versions
 ENV KUBE_VERSION="1.21.2"
 ENV KUBECONFIG=/home/tgf/.kube/config
-RUN curl -sLo_ https://storage.googleapis.com/kubernetes-release/release/v${KUBE_VERSION}/bin/linux/amd64/kubectl && mv _ ${EXE_FOLDER}/kubectl && chmod +x ${EXE_FOLDER}/kubectl && \
-    mkdir -p /home/tgf/.kube && touch ${KUBECONFIG} && chmod 666 ${KUBECONFIG}
-
-# Install helm (git is also required by helm)
 ENV HELM_VERSION="3.6.2"
 ENV HELM_HOME=/home/tgf
-RUN curl -sL https://get.helm.sh/helm-v${HELM_VERSION}-linux-amd64.tar.gz | tar xzo && mv ./linux-amd64/helm ${EXE_FOLDER}/helm && rm -rf ./linux-amd64 && chmod +x $EXE_FOLDER/helm
+
+# Download and install kubectl and helm (git is also required by helm)
+COPY Dockerfile.2_scripts/download_executables.sh .
+RUN ./download_executables.sh

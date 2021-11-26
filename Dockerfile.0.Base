@@ -1,7 +1,9 @@
 FROM alpine:3.13
 
 ARG EXE_FOLDER=/usr/local/bin
-ARG EXT=_linux_64-bits.zip
+ARG TARGETPLATFORM
+
+RUN echo "Building on platform $TARGETPLATFORM"
 
 LABEL vendor="Coveo" \
     maintainer="Coveo Solutions <tools@coveo.com>" \
@@ -22,8 +24,8 @@ RUN apk upgrade --no-cache && \
 
 # Update version here (do not move at the beginning of the file since it would slow down the docker build)
 ENV TERRAFORM_VERSION="1.0.2"
-ENV TERRAGRUNT_VERSION="2.7.0"
-ENV GOTEMPLATE_VERSION="3.7.0"
-RUN curl -sLo_ https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip && unzip -p _ > ${EXE_FOLDER}/terraform && chmod +x ${EXE_FOLDER}/terraform && rm -f _ && \
-    curl -sLo_ https://github.com/coveo/terragrunt/releases/download/v${TERRAGRUNT_VERSION}/terragrunt_${TERRAGRUNT_VERSION}${EXT} && unzip -p _ > ${EXE_FOLDER}/terragrunt && chmod +x ${EXE_FOLDER}/terragrunt && rm -f _ && \
-    curl -sLo_ https://github.com/coveo/gotemplate/releases/download/v${GOTEMPLATE_VERSION}/gotemplate_${GOTEMPLATE_VERSION}${EXT} && unzip -p _ > ${EXE_FOLDER}/gotemplate && chmod +x ${EXE_FOLDER}/gotemplate && rm -f _
+ENV TERRAGRUNT_VERSION="2.7.1"
+ENV GOTEMPLATE_VERSION="3.7.1"
+
+COPY Dockerfile.0_scripts/download_executables.sh .
+RUN ./download_executables.sh

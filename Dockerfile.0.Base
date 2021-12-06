@@ -28,4 +28,5 @@ ENV TERRAGRUNT_VERSION="2.7.1"
 ENV GOTEMPLATE_VERSION="3.7.1"
 
 COPY Dockerfile.0_scripts/download_executables.sh .
+RUN chmod +x ./download_executables.sh
 RUN ./download_executables.sh

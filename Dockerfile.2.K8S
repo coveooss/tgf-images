@@ -16,4 +16,5 @@ ENV HELM_HOME=/home/tgf
 
 # Download and install kubectl and helm (git is also required by helm)
 COPY Dockerfile.2_scripts/download_executables.sh .
+RUN chmod +x ./download_executables.sh
 RUN ./download_executables.sh

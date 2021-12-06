@@ -23,5 +23,9 @@ jobs:
         with:
           python-version: '3.x'
 
+      # https://github.com/docker/buildx/issues/729#issuecomment-898929143
+      - name: Prepare Docker build
+        run: docker run --privileged --rm tonistiigi/binfmt --install all
+
       - name: Build and Push Images
         run: python ./build_images.py --push

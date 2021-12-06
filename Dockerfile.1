@@ -24,4 +24,5 @@ ENV TF_LINT_VERSION="0.30.0"
 ENV TF_DOC_VERSION="0.10.12"
 
 COPY Dockerfile.1_scripts/download_executables.sh .
+RUN chmod +x ./download_executables.sh
 RUN ./download_executables.sh

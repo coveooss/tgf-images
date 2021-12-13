@@ -24,7 +24,7 @@ RUN apk upgrade --no-cache && \
 
 # Update version here (do not move at the beginning of the file since it would slow down the docker build)
 ENV TERRAFORM_VERSION="1.0.2"
-ENV TERRAGRUNT_VERSION="2.7.1"
+ENV TERRAGRUNT_VERSION="2.7.2"
 ENV GOTEMPLATE_VERSION="3.7.1"
 
 COPY Dockerfile.0_scripts/download_executables.sh .

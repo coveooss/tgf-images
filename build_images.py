@@ -80,7 +80,7 @@ def build_and_push_dockerfile(
         ]
         + (["-t", target_tag_major_min] if push else [])
         + ["--platform", platform]
-        + (["--push"] if push else ["--load"])
+        + (["--push"] if push else [])
         + ["."]
     )
 

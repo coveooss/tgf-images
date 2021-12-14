@@ -3,26 +3,48 @@ import os
 import re
 import subprocess
 import sys
+from contextlib import contextmanager
 from pathlib import Path
-from typing import List
+from subprocess import CompletedProcess
+from typing import Generator, List
 
 TARGET_REGISTRY = "ghcr.io/coveooss/tgf"
 
 
-def _run_command(command: List[str]) -> None:
+def _run_command(command: List[str], capture_output: bool = False) -> CompletedProcess:
     print(" ".join(command))
-    subprocess.check_call(command)
+    return subprocess.run(command, check=True, capture_output=capture_output)
+
+
+@contextmanager
+def docker_buildx_builder() -> Generator[str, None, None]:
+    print("Creating a docker buildx builder")
+
+    process = _run_command(["docker", "buildx", "create"], capture_output=True)
+    builder_name = process.stdout.decode("utf-8").strip()
+
+    print(f"Created docker buildx builder named {builder_name}")
+
+    try:
+        yield builder_name
+    finally:
+        print(f"Removing docker buildx builder named {builder_name}")
+        _run_command(["docker", "buildx", "rm", builder_name])
 
 
 def build_and_push_dockerfile(
-    dockerfile: Path, git_tag: str, push: bool = False, beta: bool = False
+    builder: str,
+    dockerfile: Path,
+    platform: str,
+    git_tag: str,
+    push: bool = False,
+    beta: bool = False,
 ) -> None:
     name = dockerfile.name
     print(f"\n----------------------------------------\nProcessing file {name}")
 
     tag = (re.match("Dockerfile\.\d+(\.(.+))?", name).group(2) or "").lower()
     tag_suffix = f"-{tag}" if tag else ""
-    display_name = tag or "base"
 
     version = git_tag.lstrip("v")
     version_maj_min = ".".join(version.split(".")[:2])
@@ -41,8 +63,7 @@ def build_and_push_dockerfile(
     temp_dockerfile = Path("dockerfile.temp")
     temp_dockerfile.open(mode="w", encoding="utf-8").write(dockerfile_content)
 
-    print(f"== Building {display_name} ==")
-    _run_command(["docker", "buildx", "create", "--use"])
+    print(f"== Building {target_tag} from {dockerfile.relative_to(Path.cwd())} ==")
     if not push:
         print(f"Not pushing, call with --push to do so")
     build_command = (
@@ -50,13 +71,15 @@ def build_and_push_dockerfile(
             "docker",
             "buildx",
             "build",
+            "--builder",
+            builder,
             "-f",
             temp_dockerfile.name,
             "-t",
             target_tag,
         ]
         + (["-t", target_tag_major_min] if push else [])
-        + ["--platform", "linux/arm64/v8,linux/amd64"]
+        + ["--platform", platform]
         + (["--push"] if push else [])
         + ["."]
     )
@@ -65,7 +88,7 @@ def build_and_push_dockerfile(
     temp_dockerfile.unlink()
 
 
-def main(push: bool = False, beta: bool = False) -> None:
+def main(platform: str, push: bool = False, beta: bool = False) -> None:
     git_tag = os.getenv("GIT_TAG")
     if not git_tag:
         git_tag = (
@@ -79,11 +102,22 @@ def main(push: bool = False, beta: bool = False) -> None:
         print('Tag does not start with "v", ignoring')
         sys.exit(0)
 
-    for dockerfile in Path.cwd().glob("Dockerfile*"):
-        if not dockerfile.is_file():
-            continue
+    dockerfiles = [
+        dockerfile
+        for dockerfile in Path.cwd().glob("Dockerfile*")
+        if dockerfile.is_file()
+    ]
+    dockerfiles = sorted(dockerfiles)
 
-        build_and_push_dockerfile(dockerfile, git_tag, push, beta)
+    print("Will build the following dockerfiles in order:")
+    for dockerfile in dockerfiles:
+        print(f"- {dockerfile.relative_to(Path.cwd())}")
+
+    with docker_buildx_builder() as builder:
+        for dockerfile in dockerfiles:
+            build_and_push_dockerfile(
+                builder, dockerfile, platform, git_tag, push, beta
+            )
 
 
 if __name__ == "__main__":
@@ -92,6 +126,16 @@ if __name__ == "__main__":
         "--push", action="store_true", help="Push images to GitHub Container Registry"
     )
     parser.add_argument("--beta", action="store_true", help="Add -beta to tags")
+    parser.add_argument(
+        "--platform",
+        type=str,
+        default="linux/arm64/v8,linux/amd64",
+        help=(
+            "What platform to build for. "
+            "Matches docker buildx build --platform. "
+            "Multiple values can be separated by commas."
+        ),
+    )
     args = parser.parse_args()
 
-    main(args.push, args.beta)
+    main(args.platform, args.push, args.beta)

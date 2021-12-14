@@ -35,6 +35,7 @@ def docker_buildx_builder() -> Generator[str, None, None]:
 def build_and_push_dockerfile(
     builder: str,
     dockerfile: Path,
+    platform: str,
     git_tag: str,
     push: bool = False,
     beta: bool = False,
@@ -78,8 +79,8 @@ def build_and_push_dockerfile(
             target_tag,
         ]
         + (["-t", target_tag_major_min] if push else [])
-        + ["--platform", "linux/arm64/v8,linux/amd64"]
-        + (["--push"] if push else [])
+        + ["--platform", platform]
+        + (["--push"] if push else ["--load"])
         + ["."]
     )
 
@@ -87,7 +88,7 @@ def build_and_push_dockerfile(
     temp_dockerfile.unlink()
 
 
-def main(push: bool = False, beta: bool = False) -> None:
+def main(platform: str, push: bool = False, beta: bool = False) -> None:
     git_tag = os.getenv("GIT_TAG")
     if not git_tag:
         git_tag = (
@@ -114,7 +115,9 @@ def main(push: bool = False, beta: bool = False) -> None:
 
     with docker_buildx_builder() as builder:
         for dockerfile in dockerfiles:
-            build_and_push_dockerfile(builder, dockerfile, git_tag, push, beta)
+            build_and_push_dockerfile(
+                builder, dockerfile, platform, git_tag, push, beta
+            )
 
 
 if __name__ == "__main__":
@@ -123,6 +126,16 @@ if __name__ == "__main__":
         "--push", action="store_true", help="Push images to GitHub Container Registry"
     )
     parser.add_argument("--beta", action="store_true", help="Add -beta to tags")
+    parser.add_argument(
+        "--platform",
+        type=str,
+        default="linux/arm64/v8,linux/amd64",
+        help=(
+            "What platform to build for. "
+            "Matches docker buildx build --platform. "
+            "Multiple values can be separated by commas."
+        ),
+    )
     args = parser.parse_args()
 
-    main(args.push, args.beta)
+    main(args.platform, args.push, args.beta)

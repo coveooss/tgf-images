@@ -31,7 +31,7 @@ jobs:
       - name: Build and push PR images for testing
         if: ${{ github.event_name == 'pull_request' }}
         env:
-          PR_NUMBER: ${{ github.event.issue.number }}
+          PR_NUMBER: ${{ github.event.number }}
         run: python ./build_and_push_images.py --version "v0.0.PR-$PR_NUMBER"
 
       - name: Build and push release images

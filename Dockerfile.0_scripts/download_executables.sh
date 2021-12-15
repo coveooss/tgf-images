@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -x
+set -xeu
 
 if [ "$TARGETPLATFORM" = linux/arm64 ]
 then

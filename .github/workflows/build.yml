@@ -29,13 +29,13 @@ jobs:
         run: docker run --privileged --rm tonistiigi/binfmt --install all
 
       - name: Build and push PR images for testing
-        if: ${{ github.event_name == "pull_request" }}
+        if: ${{ github.event_name == 'pull_request' }}
         env:
           PR_NUMBER: ${{ github.event.issue.number }}
         run: python ./build_and_push_images.py --version "v0.0.PR-$PR_NUMBER"
 
       - name: Build and push release images
-        if: ${{ github.event_name == "tag" }}
+        if: ${{ github.event_name == 'tag' }}
         env:
           VERSION: ${{ github.ref_name }}
         run: python ./build_and_push_images.py --version "$VERSION"

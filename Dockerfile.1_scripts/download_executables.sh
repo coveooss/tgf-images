@@ -1,6 +1,16 @@
 #!/bin/sh
 set -xeu
 
+download_and_install() {
+  url="$1"
+  dest="$2"
+
+  curl --silent --show-error --fail --location -o out.zip "$url"
+  unzip -p out.zip > "$dest"
+  chmod +x "$dest"
+  rm -rf out.zip
+}
+
 if [ "$TARGETPLATFORM" = linux/arm64 ]; then
   PLATFORM=arm64
   TF_DOCS_PLATFORM=arm64
@@ -11,12 +21,8 @@ fi
 
 TFLINT_PATH=https://github.com/terraform-linters/tflint/releases/download/v${TF_LINT_VERSION}/tflint_linux_${PLATFORM}.zip
 echo "Downloading tflint from $TFLINT_PATH"
-curl --silent --show-error --fail --location -o _ "${TFLINT_PATH}"
-unzip -p _ > "${EXE_FOLDER}/tflint"
-chmod +x "${EXE_FOLDER}/tflint"
-rm _
+download_and_install "$TFLINT_PATH" "$EXE_FOLDER/tflint"
 
-TERRAFORM_DOCS_PATH=https://github.com/coveord/terraform-docs/releases/download/v${TF_DOC_VERSION}/terraform-docs-${TF_DOC_VERSION}-linux-${TF_DOCS_PLATFORM}
+TERRAFORM_DOCS_PATH=https://github.com/coveord/terraform-docs/releases/download/v${TF_DOC_VERSION}/terraform-docs_${TF_DOC_VERSION}_linux_${TF_DOCS_PLATFORM}.zip
 echo "Downloading terraform-docs from $TERRAFORM_DOCS_PATH"
-curl --silent --show-error --fail --location -o "$EXE_FOLDER/terraform-docs" "$TERRAFORM_DOCS_PATH"
-chmod +x "${EXE_FOLDER}/terraform-docs"
+download_and_install "$TERRAFORM_DOCS_PATH" "$EXE_FOLDER/terraform-docs"

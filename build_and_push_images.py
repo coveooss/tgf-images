@@ -3,7 +3,6 @@ import logging
 import os
 import re
 import subprocess
-import sys
 from contextlib import contextmanager
 from pathlib import Path
 from subprocess import CompletedProcess
@@ -38,8 +37,7 @@ def build_and_push_dockerfile(
     builder: str,
     dockerfile: Path,
     platform: str,
-    git_tag: str,
-    push: bool = False,
+    version: str,
     beta: bool = False,
 ) -> None:
     name = dockerfile.name
@@ -48,7 +46,7 @@ def build_and_push_dockerfile(
     tag = (re.match("Dockerfile\.\d+(\.(.+))?", name).group(2) or "").lower()
     tag_suffix = f"-{tag}" if tag else ""
 
-    version = git_tag.lstrip("v")
+    version = version.lstrip("v")
     version_maj_min = ".".join(version.split(".")[:2])
 
     beta_part = "-beta" if beta else ""
@@ -66,9 +64,8 @@ def build_and_push_dockerfile(
     temp_dockerfile.open(mode="w", encoding="utf-8").write(dockerfile_content)
 
     logging.info(f"Building {target_tag} from {dockerfile.relative_to(Path.cwd())}")
-    if not push:
-        logging.info(f"Not pushing, call with --push to do so")
-    build_command = (
+
+    _run_command(
         [
             "docker",
             "buildx",
@@ -79,30 +76,25 @@ def build_and_push_dockerfile(
             temp_dockerfile.name,
             "-t",
             target_tag,
+            "-t",
+            target_tag_major_min,
+            "--platform",
+            platform,
+            # We always push because docker buildx does not look at the local
+            # images, it always pull from repos.
+            "--push",
+            ".",
         ]
-        + (["-t", target_tag_major_min] if push else [])
-        + ["--platform", platform]
-        + (["--push"] if push else [])
-        + ["."]
     )
 
-    _run_command(build_command)
     temp_dockerfile.unlink()
 
 
-def main(platform: str, push: bool = False, beta: bool = False) -> None:
-    git_tag = os.getenv("GIT_TAG")
-    if not git_tag:
-        git_tag = (
-            subprocess.check_output(["git", "describe", "--abbrev=0", "--tags"])
-            .decode("utf-8")
-            .strip()
+def main(version: str, platform: str, beta: bool = False) -> None:
+    if not re.match(r"^v[^.]+\.[^.]+\.[^.]+$", version):
+        raise ValueError(
+            f"Expected version ({version}) be in vX.Y.Z format. It is not."
         )
-    logging.info(f"Git tag: {git_tag}")
-
-    if not git_tag.startswith("v"):
-        logging.info('Tag does not start with "v", ignoring')
-        sys.exit(0)
 
     dockerfiles = [
         dockerfile
@@ -111,23 +103,22 @@ def main(platform: str, push: bool = False, beta: bool = False) -> None:
     ]
     dockerfiles = sorted(dockerfiles)
 
-    relative_dockerfiles = [str(dockerfile.relative_to(Path.cwd())) for dockerfile in dockerfiles]
-    logging.info(f"Will build the following dockerfiles in order: {relative_dockerfiles}")
+    relative_dockerfiles = [
+        str(dockerfile.relative_to(Path.cwd())) for dockerfile in dockerfiles
+    ]
+    logging.info(
+        f"Will build the following dockerfiles in order: {relative_dockerfiles}"
+    )
 
     with docker_buildx_builder() as builder:
         for dockerfile in dockerfiles:
-            build_and_push_dockerfile(
-                builder, dockerfile, platform, git_tag, push, beta
-            )
+            build_and_push_dockerfile(builder, dockerfile, platform, version, beta)
 
 
 if __name__ == "__main__":
     logging.getLogger().setLevel(os.getenv("BUILD_IMAGE_LOG_LEVEL", "info").upper())
 
     parser = argparse.ArgumentParser(description="Build and push TGF images")
-    parser.add_argument(
-        "--push", action="store_true", help="Push images to GitHub Container Registry"
-    )
     parser.add_argument("--beta", action="store_true", help="Add -beta to tags")
     parser.add_argument(
         "--platform",
@@ -139,6 +130,11 @@ if __name__ == "__main__":
             "Multiple values can be separated by commas."
         ),
     )
+    parser.add_argument(
+        "--version",
+        required=True,
+        help="What image version to tag the resulting docker images with. Should be in vX.Y.Z format.",
+    )
     args = parser.parse_args()
 
-    main(args.platform, args.push, args.beta)
+    main(args.version, args.platform, args.beta)

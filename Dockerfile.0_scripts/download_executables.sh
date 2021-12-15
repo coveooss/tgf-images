@@ -6,7 +6,7 @@ download_and_install() {
   dest="$2"
 
   curl --silent --show-error --fail --location -o out.zip "$url"
-  unzip -p out.zip "$dest"
+  unzip -p out.zip > "$dest"
   chmod +x "$dest"
   rm -rf out.zip
 }

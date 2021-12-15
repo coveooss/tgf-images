@@ -16,7 +16,7 @@ unzip -p _ > "${EXE_FOLDER}/tflint"
 chmod +x "${EXE_FOLDER}/tflint"
 rm _
 
-TERRAFORM_DOCS_PATH=https://github.com/coveord/terraform-docs/releases/download/v${TF_DOC_VERSION}/terraform-docs-v${TF_DOC_VERSION}-linux-${TF_DOCS_PLATFORM}
+TERRAFORM_DOCS_PATH=https://github.com/coveord/terraform-docs/releases/download/v${TF_DOC_VERSION}/terraform-docs-${TF_DOC_VERSION}-linux-${TF_DOCS_PLATFORM}
 echo "Downloading terraform-docs from $TERRAFORM_DOCS_PATH"
 curl --silent --show-error --fail --location -o "$EXE_FOLDER/terraform-docs" "$TERRAFORM_DOCS_PATH"
 chmod +x "${EXE_FOLDER}/terraform-docs"

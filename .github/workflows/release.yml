@@ -1,0 +1,17 @@
+name: Release
+on:
+  push:
+    tags:
+      - "v*"
+jobs:
+  build-and-push:
+    name: Build and push images
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Build and push release images
+        uses: ./.github/actions/build-and-push-images
+        with:
+          version: ${{ github.ref_name }}

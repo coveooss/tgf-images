@@ -1,0 +1,31 @@
+name: Build and push images
+
+inputs:
+  version:
+    description: What version to build & push (format is vX.Y.Z)
+    required: true
+
+runs:
+  using: composite
+
+  steps:
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Setup Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    # https://github.com/docker/buildx/issues/729#issuecomment-898929143
+    - name: Prepare Docker build
+      run: docker run --privileged --rm tonistiigi/binfmt --install all
+
+    - name: Build and push images
+      env:
+        VERSION: ${{ inputs.version }}
+      run: python ./build_and_push_images.py --version "$VERSION"

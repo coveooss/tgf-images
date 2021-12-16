@@ -35,7 +35,7 @@ jobs:
         run: python ./build_and_push_images.py --version "v0.0.PR-$PR_NUMBER"
 
       - name: Build and push release images
-        if: ${{ github.event_name == 'tag' }}
+        if: ${{ github.ref_type == 'tag' }}
         env:
           VERSION: ${{ github.ref_name }}
         run: python ./build_and_push_images.py --version "$VERSION"

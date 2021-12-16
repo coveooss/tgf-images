@@ -17,3 +17,14 @@ jobs:
 
       - name: Run shellcheck
         run: fd --hidden --exclude .git . -e .sh -x shellcheck --color=always
+
+  build-and-push-test-images:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build and push test images
+        uses: ./.github/actions/build-and-push-images
+        with:
+          version: v0.0.PR-${{ github.event.number }}

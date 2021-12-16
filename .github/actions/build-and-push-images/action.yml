@@ -23,9 +23,11 @@ runs:
 
     # https://github.com/docker/buildx/issues/729#issuecomment-898929143
     - name: Prepare Docker build
+      shell: bash
       run: docker run --privileged --rm tonistiigi/binfmt --install all
 
     - name: Build and push images
+      shell: bash
       env:
         VERSION: ${{ inputs.version }}
       run: python ./build_and_push_images.py --version "$VERSION"

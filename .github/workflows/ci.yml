@@ -7,6 +7,11 @@ jobs:
     container: koalaman/shellcheck-alpine:stable
 
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
+
       - name: Install system dependencies
         run: |
           apk add --no-cache \
@@ -22,6 +27,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Harden Runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
+
       - uses: actions/checkout@v2
 
       - name: Build and push test images
